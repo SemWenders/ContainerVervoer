@@ -9,7 +9,7 @@ namespace ContainerTests
     public class ContainerTests
     {
         [TestMethod]
-        public void ContainerTest1()
+        public void CheckAlgorithm()
         {
             Ship ship = new Ship(3, 5);
             Dock dock = new Dock(ship);
@@ -41,8 +41,12 @@ namespace ContainerTests
             Assert.AreEqual(balancePercentage < 0.20M, true);
         }
 
+        /// <summary>
+        /// In an earlier the first version there was a problem where too much weight would be stacked onto a container
+        /// This test checks if this is resolved
+        /// </summary>
         [TestMethod]
-        public void ContainersTest2()
+        public void CheckTheMaxWeightOnTopOfAContainer()
         {
             Ship ship = new Ship(4, 6);
             Dock dock = new Dock(ship);
