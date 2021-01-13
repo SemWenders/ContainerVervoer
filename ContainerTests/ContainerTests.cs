@@ -35,7 +35,7 @@ namespace ContainerTests
             Container container = new Container(6000, true, true);
             dock.ContainersToBeAdded.Add(container);
 
-            dock.Calculate();
+            dock.CalculateContainerPlacement();
 
             decimal balancePercentage = CalculateDifferencePercentage(ship);
             Assert.AreEqual(balancePercentage < 0.20M, true);
@@ -56,7 +56,7 @@ namespace ContainerTests
                 dock.ContainersToBeAdded.Add(container);
             }
 
-            dock.Calculate();
+            dock.CalculateContainerPlacement();
             decimal balancePercentage = CalculateDifferencePercentage(ship);
             Assert.AreEqual(balancePercentage < 0.20M, true);
             //check if the correct amount of containerstacks are used

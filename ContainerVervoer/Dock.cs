@@ -42,64 +42,57 @@ namespace ContainerVervoer
         {
             foreach (var containerStack in Ship.ContainerStacks)
             {
-                List<Container> cooledContainers = ContainersToBeAdded.FindAll(c => c.Cooled);
-                foreach (var container in cooledContainers)
-                {
-                    if (containerStack.IsContainerAble(container, Ship.Columns))
-                    {
-                        containerStack.AddContainerToStack(container);
-                        ContainersToBeAdded.Remove(container);
-                    }
-                }
+                PlaceCooledContainers(containerStack);
 
-                List<Container> regularContainers = ContainersToBeAdded.FindAll(c => !c.Cooled && !c.Valuable);
-                foreach (var container in regularContainers)
-                {
-                    if (containerStack.IsContainerAble(container, Ship.Columns))
-                    {
-                        containerStack.AddContainerToStack(container);
-                        ContainersToBeAdded.Remove(container);
-                    }
-                }
+                PlaceRegularContainers(containerStack);
 
-                List<Container> valuedContainers = ContainersToBeAdded.FindAll(c => c.Valuable);
-                foreach (var container in valuedContainers)
+                PlaceValuableContainers(containerStack);
+            }
+        }
+
+        private void PlaceCooledContainers(ContainerStack containerStack)
+        {
+            List<Container> cooledContainers = ContainersToBeAdded.FindAll(c => c.Cooled);
+            foreach (var container in cooledContainers)
+            {
+                if (containerStack.IsContainerAble(container, Ship.Columns))
                 {
-                    if (containerStack.IsContainerAble(container, Ship.Columns))
-                    {
-                        containerStack.AddContainerToStack(container);
-                        ContainersToBeAdded.Remove(container);
-                    }
+                    containerStack.AddContainerToStack(container);
+                    ContainersToBeAdded.Remove(container);
                 }
             }
         }
 
-        public void Balance()
+        private void PlaceRegularContainers(ContainerStack containerStack)
         {
-            Side heavySide = Side.Left;
-            Side lightSide = Side.Left;
-            int heavySideWeight = 0;
-            int lightSideWeight = 0;
-
-            if (Ship.WeightLeftSide() > Ship.WeightRightSide())
+            List<Container> regularContainers = ContainersToBeAdded.FindAll(c => !c.Cooled && !c.Valuable);
+            foreach (var container in regularContainers)
             {
-                heavySide = Side.Left;
-                lightSide = Side.Right;
-
-                heavySideWeight = Ship.WeightLeftSide();
-                lightSideWeight = Ship.WeightRightSide();
+                if (containerStack.IsContainerAble(container, Ship.Columns))
+                {
+                    containerStack.AddContainerToStack(container);
+                    ContainersToBeAdded.Remove(container);
+                }
             }
+        }
 
-            else if (Ship.WeightRightSide() > Ship.WeightLeftSide())
+        private void PlaceValuableContainers(ContainerStack containerStack)
+        {
+            List<Container> valuedContainers = ContainersToBeAdded.FindAll(c => c.Valuable);
+            foreach (var container in valuedContainers)
             {
-                heavySide = Side.Right;
-                lightSide = Side.Left;
-
-                heavySideWeight = Ship.WeightRightSide();
-                lightSideWeight = Ship.WeightLeftSide();
+                if (containerStack.IsContainerAble(container, Ship.Columns))
+                {
+                    containerStack.AddContainerToStack(container);
+                    ContainersToBeAdded.Remove(container);
+                }
             }
+        }
 
-            int difference = heavySideWeight - lightSideWeight;
+        public void BalanceTheShip()
+        {
+            Side heavySide = GetHeavySide();
+            Side lightSide = GetLightSide();
 
             List<ContainerStack> heavyContainerStacks = Ship.ContainerStacks.FindAll(c => c.Side == heavySide);
             List<ContainerStack> lightContainerStacks = Ship.ContainerStacks.FindAll(c => c.Side == lightSide);
@@ -121,7 +114,33 @@ namespace ContainerVervoer
             }
         }
 
-        public void Calculate()
+        private Side GetHeavySide()
+        {
+            if (Ship.WeightLeftSide() > Ship.WeightRightSide())
+            {
+                return Side.Left;
+            }
+
+            else
+            {
+                return Side.Right;
+            }
+        }
+
+        private Side GetLightSide()
+        {
+            if (Ship.WeightLeftSide() < Ship.WeightRightSide())
+            {
+                return Side.Left;
+            }
+
+            else
+            {
+                return Side.Right;
+            }
+        }
+
+        public void CalculateContainerPlacement()
         {
             if (TotalContainersWeight() > Ship.MaxWeight)
             {
@@ -139,7 +158,7 @@ namespace ContainerVervoer
 
             while (!Ship.IsShipBalanced())
             {
-                Balance();
+                BalanceTheShip();
             }
         }
     }

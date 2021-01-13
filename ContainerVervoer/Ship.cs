@@ -63,48 +63,51 @@ namespace ContainerVervoer
             }
         }
 
-        public void AddContainerStacks()
+        private void AddContainerStacks()
         {
             for (int i = 0; i < Columns; i++)
             {
                 for (int ii = 0; ii < Convert.ToDecimal(Rows); ii++)
                 {
-                    Side side;
-                    if (Rows % 2 == 0)
-                    {
-                        if (ii % 2 == 0)
-                        {
-                            side = Side.Left;
-                        }
+                    Side side = DecideSideOfStack(ii);
+                    ContainerStack containerStack = new ContainerStack(ii, i, side);
+                    ContainerStacks.Add(containerStack);
+                }
+            }
+        }
 
-                        else
-                        {
-                            side = Side.Right;
-                        }
+        private Side DecideSideOfStack(int row)
+        {
+            if (Rows % 2 == 0)
+            {
+                if (row % 2 == 0)
+                {
+                    return Side.Left;
+                }
+                else
+                {
+                    return Side.Right;
+                }
+            }
+
+            else
+            {
+                if (row % 2 == 0)
+                {
+                    return Side.Left;
+                }
+
+                else
+                {
+                    if (row == ((Rows / 2) + 0.5))
+                    {
+                        return Side.Middle;
                     }
 
                     else
                     {
-                        if (ii % 2 == 0)
-                        {
-                            side = Side.Left;
-                        }
-
-                        else
-                        {
-                            if (ii == ((Rows / 2) + 0.5))
-                            {
-                                side = Side.Middle;
-                            }
-
-                            else
-                            {
-                                side = Side.Right;
-                            }
-                        }
+                        return Side.Right;
                     }
-                    ContainerStack containerStack = new ContainerStack(ii, i, side);
-                    ContainerStacks.Add(containerStack);
                 }
             }
         }
